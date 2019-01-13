@@ -134,16 +134,18 @@
 
 
 
-  <meta name="description" content="Fire walk with me">
-<meta property="og:type" content="website">
-<meta property="og:title" content="迎向灵光消逝的年代">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="背景项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。 翻了下 Spring Boot 的手册，Spring Boot Actuator 中的 /metrics 端点中只暴露了 httpsessions.active 和 httpsessions.max 两个指标，不够用。 因此要研究一下如何开启 Spring Boo">
+<meta name="keywords" content="Java,Spring Boot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用">
+<meta property="og:url" content="http://yoursite.com/2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/index.html">
 <meta property="og:site_name" content="迎向灵光消逝的年代">
-<meta property="og:description" content="Fire walk with me">
+<meta property="og:description" content="背景项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。 翻了下 Spring Boot 的手册，Spring Boot Actuator 中的 /metrics 端点中只暴露了 httpsessions.active 和 httpsessions.max 两个指标，不够用。 因此要研究一下如何开启 Spring Boo">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-01-13T07:44:53.043Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="迎向灵光消逝的年代">
-<meta name="twitter:description" content="Fire walk with me">
+<meta name="twitter:title" content="使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用">
+<meta name="twitter:description" content="背景项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。 翻了下 Spring Boot 的手册，Spring Boot Actuator 中的 /metrics 端点中只暴露了 httpsessions.active 和 httpsessions.max 两个指标，不够用。 因此要研究一下如何开启 Spring Boo">
 
 
 
@@ -152,7 +154,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/">
+  <link rel="canonical" href="http://yoursite.com/2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/">
 
 
 
@@ -162,7 +164,7 @@
   };
 </script>
 
-  <title>迎向灵光消逝的年代</title>
+  <title>使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用 | 迎向灵光消逝的年代</title>
   
 
 
@@ -209,8 +211,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -247,7 +248,7 @@
         
         
           
-          <li class="menu-item menu-item-home menu-item-active">
+          <li class="menu-item menu-item-home">
     <a href="/" rel="section">
       <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
   </li>
@@ -307,9 +308,9 @@
           
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -341,11 +342,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/" itemprop="url">
-                  使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用
-                </a>
+          <h1 class="post-title" itemprop="name headline">使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用
               
             
           </h1>
@@ -420,9 +417,7 @@
       
 
       
-        
-          
-            <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。</p>
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。</p>
 <p>翻了下 Spring Boot 的手册，Spring Boot Actuator 中的 <code>/metrics</code> 端点中只暴露了 <code>httpsessions.active</code> 和 <code>httpsessions.max</code> 两个指标，不够用。</p>
 <p>因此要研究一下如何开启 Spring Boot 内嵌 Tomcat 的 JMX 监控。</p>
 <h1 id="远程监控"><a href="#远程监控" class="headerlink" title="远程监控"></a>远程监控</h1><p>Google 了一下，发现 Spring Boot 已支持 JMX 监控。本机直接启动 jconsole 即可连接。</p>
@@ -437,8 +432,6 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-Dcom.sun.management.jmxremote </span><br><span class="line">-Dcom.sun.management.jmxremote.port=<span class="number">1898</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.rmi.port=<span class="number">1898</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.authenticate=<span class="keyword">false</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.ssl=<span class="keyword">false</span> </span><br><span class="line">-Djava.rmi.server.hostname=<span class="number">192.168</span>.0.90</span><br></pre></td></tr></table></figure>
 <p>再想一下，为何在 IDEA 里面不需要显式配置RMI 端口呢？答案很简单，因为 Docker 必须显式指定映射到主机上的端口，动态分配的端口不会映射出来，因此 jconsole 连接时虽然刚开始可以连接上，但接下来 <code>RMI</code> 必然会失败。</p>
 
-          
-        
       
     </div>
 
@@ -456,14 +449,22 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+          
+        </div>
+      
+
+      
+      
+      
 
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -473,14 +474,15 @@
   </article>
 
 
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -501,8 +503,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -571,6 +582,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#远程监控"><span class="nav-number">2.</span> <span class="nav-text">远程监控</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在-Docker-中远程监控"><span class="nav-number">3.</span> <span class="nav-text">在 Docker 中远程监控</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -701,6 +728,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
 
   
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>迎向灵光消逝的年代</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2019-01-13T07:44:53.043Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>Luke Zhan</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用</title>
+    <link href="http://yoursite.com/2019/01/12/%E4%BD%BF%E7%94%A8%20JMX%20%E7%9B%91%E6%8E%A7%20Docker%20%E4%B8%AD%E8%BF%90%E8%A1%8C%E7%9A%84%20Spring%20Boot%20%E5%BA%94%E7%94%A8/"/>
+    <id>http://yoursite.com/2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/</id>
+    <published>2019-01-12T03:13:08.000Z</published>
+    <updated>2019-01-13T07:44:53.043Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。</p><p>翻了下 Spring Boot 的手册，Spring Boot Actuator 中的 <code>/metrics</code> 端点中只暴露了 <code>httpsessions.active</code> 和 <code>httpsessions.max</code> 两个指标，不够用。</p><p>因此要研究一下如何开启 Spring Boot 内嵌 Tomcat 的 JMX 监控。</p><h1 id="远程监控"><a href="#远程监控" class="headerlink" title="远程监控"></a>远程监控</h1><p>Google 了一下，发现 Spring Boot 已支持 JMX 监控。本机直接启动 jconsole 即可连接。</p><p>远程 JMX 连接需要配置启动参数，在 JVM 启动参数中添加：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-Dcom.sun.management.jmxremote </span><br><span class="line">-Dcom.sun.management.jmxremote.port=<span class="number">1898</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.authenticate=<span class="keyword">false</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.ssl=<span class="keyword">false</span> </span><br><span class="line">-Djava.rmi.server.hostname=<span class="number">192.168</span>.0.90</span><br></pre></td></tr></table></figure><p>具体在 IDEA 中需要配置到 <code>VM options</code>里。</p><h1 id="在-Docker-中远程监控"><a href="#在-Docker-中远程监控" class="headerlink" title="在 Docker 中远程监控"></a>在 Docker 中远程监控</h1><p>在 IDEA 中运行成功后，本以为将上面的启动参数加到 Docker 的环境变量里便能开开心心地玩耍了。谁知道 jconsole 可以远程连上 Docker 应用，但弹出不安全连接后，便连接失败。</p><p>搜索一番，终于在 <a href="https://ptmccarthy.github.io/2014/07/24/remote-jmx-with-docker/" target="_blank" rel="noopener">此处</a> 找到答案，原来 JMX 除了初始的连接端口外，还会另外动态分配一个端口用于 RMI 连接。因此要显式配置一下才行：</p><p><code>-Dcom.sun.management.jmxremote.rmi.port=1898</code></p><p>当然，Docker 的启动参数需要将端口 1898 映射出来。</p><p>完整的配置：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-Dcom.sun.management.jmxremote </span><br><span class="line">-Dcom.sun.management.jmxremote.port=<span class="number">1898</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.rmi.port=<span class="number">1898</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.authenticate=<span class="keyword">false</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.ssl=<span class="keyword">false</span> </span><br><span class="line">-Djava.rmi.server.hostname=<span class="number">192.168</span>.0.90</span><br></pre></td></tr></table></figure><p>再想一下，为何在 IDEA 里面不需要显式配置RMI 端口呢？答案很简单，因为 Docker 必须显式指定映射到主机上的端口，动态分配的端口不会映射出来，因此 jconsole 连接时虽然刚开始可以连接上，但接下来 <code>RMI</code> 必然会失败。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h1&gt;&lt;p&gt;项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。&lt;/p&gt;
+
+      
+    
+    </summary>
+    
+    
+      <category term="Java" scheme="http://yoursite.com/tags/Java/"/>
+    
+      <category term="Spring Boot" scheme="http://yoursite.com/tags/Spring-Boot/"/>
+    
+  </entry>
+  
+</feed>
