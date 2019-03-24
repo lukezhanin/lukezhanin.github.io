@@ -134,18 +134,18 @@
 
 
 
-  <meta name="description" content="背景项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。 翻了下 Spring Boot 的手册，Spring Boot Actuator 中的 /metrics 端点中只暴露了 httpsessions.active 和 httpsessions.max 两个指标，不够用。 因此要研究一下如何开启 Spring Boo">
-<meta name="keywords" content="Java,Spring Boot">
+  <meta name="description" content="背景公司 Gitlab 新换了一台服务器，已经将老服务器数据迁移过去了。忽报 Push 代码后 Jenkins 无法自动构建镜像。 登上 Gitlab 准备看看是不是 Webhook 配置有问题，结果点开项目的集成页面，给我一个 500，没有具体错误，只让联系管理员。 恢复数据的同事没空，于是完全不熟悉 Gitlab 安装部署的我只好赶鸭子上架顶上了。 问题原因打开 Gitlab 后台日志，将错误">
+<meta name="keywords" content="Tools&amp;Tips&amp;Tricks">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用">
-<meta property="og:url" content="https://lukezhanin.github.io/2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/index.html">
+<meta property="og:title" content="Gitlab 迁移惊魂记">
+<meta property="og:url" content="https://lukezhanin.github.io/2019/02/27/Gitlab-迁移惊魂记/index.html">
 <meta property="og:site_name" content="迎向灵光消逝的年代">
-<meta property="og:description" content="背景项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。 翻了下 Spring Boot 的手册，Spring Boot Actuator 中的 /metrics 端点中只暴露了 httpsessions.active 和 httpsessions.max 两个指标，不够用。 因此要研究一下如何开启 Spring Boo">
+<meta property="og:description" content="背景公司 Gitlab 新换了一台服务器，已经将老服务器数据迁移过去了。忽报 Push 代码后 Jenkins 无法自动构建镜像。 登上 Gitlab 准备看看是不是 Webhook 配置有问题，结果点开项目的集成页面，给我一个 500，没有具体错误，只让联系管理员。 恢复数据的同事没空，于是完全不熟悉 Gitlab 安装部署的我只好赶鸭子上架顶上了。 问题原因打开 Gitlab 后台日志，将错误">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-01-14T02:05:50.572Z">
+<meta property="og:updated_time" content="2019-03-24T03:17:31.808Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用">
-<meta name="twitter:description" content="背景项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。 翻了下 Spring Boot 的手册，Spring Boot Actuator 中的 /metrics 端点中只暴露了 httpsessions.active 和 httpsessions.max 两个指标，不够用。 因此要研究一下如何开启 Spring Boo">
+<meta name="twitter:title" content="Gitlab 迁移惊魂记">
+<meta name="twitter:description" content="背景公司 Gitlab 新换了一台服务器，已经将老服务器数据迁移过去了。忽报 Push 代码后 Jenkins 无法自动构建镜像。 登上 Gitlab 准备看看是不是 Webhook 配置有问题，结果点开项目的集成页面，给我一个 500，没有具体错误，只让联系管理员。 恢复数据的同事没空，于是完全不熟悉 Gitlab 安装部署的我只好赶鸭子上架顶上了。 问题原因打开 Gitlab 后台日志，将错误">
 
 
 
@@ -154,7 +154,7 @@
 
 
 
-  <link rel="canonical" href="https://lukezhanin.github.io/2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/">
+  <link rel="canonical" href="https://lukezhanin.github.io/2019/02/27/Gitlab-迁移惊魂记/">
 
 
 
@@ -164,7 +164,7 @@
   };
 </script>
 
-  <title>使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用 | 迎向灵光消逝的年代</title>
+  <title>Gitlab 迁移惊魂记 | 迎向灵光消逝的年代</title>
   
 
 
@@ -329,7 +329,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://lukezhanin.github.io/2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/">
+    <link itemprop="mainEntityOfPage" href="https://lukezhanin.github.io/2019/02/27/Gitlab-迁移惊魂记/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Luke Zhan">
@@ -346,7 +346,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用
+          <h1 class="post-title" itemprop="name headline">Gitlab 迁移惊魂记
               
             
           </h1>
@@ -371,7 +371,7 @@
                 
               
 
-              <time title="创建时间：2019-01-12 11:13:08" itemprop="dateCreated datePublished" datetime="2019-01-12T11:13:08+08:00">2019-01-12</time>
+              <time title="创建时间：2019-02-27 16:24:24" itemprop="dateCreated datePublished" datetime="2019-02-27T16:24:24+08:00">2019-02-27</time>
             
 
             
@@ -388,7 +388,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-01-14 10:05:50" itemprop="dateModified" datetime="2019-01-14T10:05:50+08:00">2019-01-14</time>
+                <time title="修改时间：2019-03-24 11:17:31" itemprop="dateModified" datetime="2019-03-24T11:17:31+08:00">2019-03-24</time>
               
             
           </span>
@@ -402,9 +402,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/#comments" itemprop="discussionUrl">
+                <a href="/2019/02/27/Gitlab-迁移惊魂记/#comments" itemprop="discussionUrl">
                 
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/" itemprop="commentCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/02/27/Gitlab-迁移惊魂记/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -432,20 +432,33 @@
       
 
       
-        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>项目中要求监控 Tomcat 的运行指标，如活动连接数、线程池情况等。我们使用的是 Spring Boot 内嵌的 Tomcat。</p>
-<p>翻了下 Spring Boot 的手册，Spring Boot Actuator 中的 <code>/metrics</code> 端点中只暴露了 <code>httpsessions.active</code> 和 <code>httpsessions.max</code> 两个指标，不够用。</p>
-<p>因此要研究一下如何开启 Spring Boot 内嵌 Tomcat 的 JMX 监控。</p>
-<h1 id="远程监控"><a href="#远程监控" class="headerlink" title="远程监控"></a>远程监控</h1><p>Google 了一下，发现 Spring Boot 已支持 JMX 监控。本机直接启动 jconsole 即可连接。</p>
-<p>远程 JMX 连接需要配置启动参数，在 JVM 启动参数中添加：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-Dcom.sun.management.jmxremote </span><br><span class="line">-Dcom.sun.management.jmxremote.port=<span class="number">1898</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.authenticate=<span class="keyword">false</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.ssl=<span class="keyword">false</span> </span><br><span class="line">-Djava.rmi.server.hostname=<span class="number">192.168</span>.0.90</span><br></pre></td></tr></table></figure>
-<p>具体在 IDEA 中需要配置到 <code>VM options</code>里。</p>
-<h1 id="在-Docker-中远程监控"><a href="#在-Docker-中远程监控" class="headerlink" title="在 Docker 中远程监控"></a>在 Docker 中远程监控</h1><p>在 IDEA 中运行成功后，本以为将上面的启动参数加到 Docker 的环境变量里便能开开心心地玩耍了。谁知道 jconsole 可以远程连上 Docker 应用，但弹出不安全连接后，便连接失败。</p>
-<p>搜索一番，终于在 <a href="https://ptmccarthy.github.io/2014/07/24/remote-jmx-with-docker/" target="_blank" rel="noopener">此处</a> 找到答案，原来 JMX 除了初始的连接端口外，还会另外动态分配一个端口用于 RMI 连接。因此要显式配置一下才行：</p>
-<p><code>-Dcom.sun.management.jmxremote.rmi.port=1898</code></p>
-<p>当然，Docker 的启动参数需要将端口 1898 映射出来。</p>
-<p>完整的配置：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-Dcom.sun.management.jmxremote </span><br><span class="line">-Dcom.sun.management.jmxremote.port=<span class="number">1898</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.rmi.port=<span class="number">1898</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.authenticate=<span class="keyword">false</span> </span><br><span class="line">-Dcom.sun.management.jmxremote.ssl=<span class="keyword">false</span> </span><br><span class="line">-Djava.rmi.server.hostname=<span class="number">192.168</span>.0.90</span><br></pre></td></tr></table></figure>
-<p>再想一下，为何在 IDEA 里面不需要显式配置RMI 端口呢？答案很简单，因为 Docker 必须显式指定映射到主机上的端口，动态分配的端口不会映射出来，因此 jconsole 连接时虽然刚开始可以连接上，但接下来 RMI 必然会失败。</p>
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>公司 Gitlab 新换了一台服务器，已经将老服务器数据迁移过去了。忽报 Push 代码后 Jenkins 无法自动构建镜像。</p>
+<p>登上 Gitlab 准备看看是不是 Webhook 配置有问题，结果点开项目的集成页面，给我一个 500，没有具体错误，只让联系管理员。</p>
+<p>恢复数据的同事没空，于是完全不熟悉 Gitlab 安装部署的我只好赶鸭子上架顶上了。</p>
+<h1 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h1><p>打开 Gitlab 后台日志，将错误拿出来搜索。在 Gitlab Issues 里面，找到一个类似<a href="https://gitlab.com/gitlab-org/gitlab-ce/issues/53465" target="_blank" rel="noopener">问题</a>，提到应该是迁移数据时没有将 <code>/etc/gitlab/gitlab-secrets.json</code>恢复，导致数据库中加密过的数据无法解密。下面的吃瓜群众纷纷表示恢复这个文件后就天下太平了。</p>
+<p>幸好老的服务器还在，连忙将对应文件恢复到新服务器，并重启服务等待奇迹。然而，并没有……</p>
+<p>这就难以理解了。难道我的操作姿势不对？</p>
+<p>又是一番搜索，发现官方文档中说在密钥丢失时，可以删除掉 ci 相关变量，重新配置。那 Webhook 是不是可以如法炮制？</p>
+<p>根据 ci 表名<code>ci_variables</code>猜测 Webhook 的表名应该是 <code>Webhooks</code>。打开 dbconsole 尝试查询，发现果然有这个表，而且表中数据有这个项目配置的钩子，而且内容是加密的。删掉本项目的几条数据，再次打开集成页面，可以打开，虽然之前配置的钩子都被删掉了。 </p>
+<p>难道就这么简单地搞定了吗？不不，Too simple, sometimes naive。打开应用配置页面，发现无论点什么选项保存都报 500。这下完了。看来刚刚删除掉一个项目的钩子数据只是头痛医头而已。问题还是在于解密密钥不对导致系统内所有加密数据都无法解密。难道，得重新恢复整个 Gitlab？光是想想都觉得头痛。</p>
+<p>还是得回过头来思考为什么刚才恢复了 <code>gitlab-secrets.json</code>却没起作用。</p>
+<p>吃瓜群众们，你们到底还有什么压箱底的操作没有说出来？在另一个 issue 里，我发现了和我有相同遭遇的 Poor guy - Augusto Partida：<code>How can avoid this issue? restoring gitlab-secrets.json doesn&#39;t make any difference.</code></p>
+<p>回到开头提到的那个 issue，里面有个老兄说用 <code>secrets.yml</code> 恢复了数据，难道我们的 <code>gitlab-secrets.json</code> 不起作用是因为程序并没有用到里面的密钥？</p>
+<p>在文件系统中搜索一下，发现果然在 <code>/opt/gitlab/embedded/service/gitlab-rails/config/</code>下有个 <code>secrets.yml</code>。打开一看，里面果然有 <code>db_base_key</code>，而且跟 <code>/etc/gitlab/gitlab-secrets.json</code>中的值不相同。</p>
+<p>看样子找到问题了，那么下面就只需要解决如何使我们的配置生效的问题。这个就简单了，稍稍搜索就能找到方法。</p>
+<h1 id="如何解决"><a href="#如何解决" class="headerlink" title="如何解决"></a>如何解决</h1><p>恢复<code>gitlab-secrets.yml</code>文件后，需要重配置一下 Gitlab，并重启服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo gitlab-ctl reconfigure</span><br><span class="line">sudo gitlab-ctl restart</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>同事之前迁移数据是找的中文博客，没有完全按照官方文档操作。官方文档中有说明要<a href="https://docs.gitlab.com/ee/raketasks/backup_restore.html#storing-configuration-files" target="_blank" rel="noopener">备份配置文件</a>。如果完全按照官方文档操作，就不会有我这几个小时的折腾，也不会有这篇博客了。重要操作一定要先读官方文档，并按官方说明操作。</li>
+<li>Gitlab 还有改进的空间，至少 500 的错误需要有相应的解决方法指引，不至于用户看到只能两眼一抹黑。</li>
+<li>解决方法也许很简单，但寻找解决方法的过程却很曲折。如果我知道 Gitlab 配置生效需要 <code>reconfigure</code>一下，那么问题可能十分钟就能解决掉，不需要后面反复尝试。由此可以看出，在很多领域，如工程、看病，经验非常重要。</li>
+</ol>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ol>
+<li><a href="https://gitlab.com/gitlab-org/gitlab-ce/issues/53465" target="_blank" rel="noopener">Gitlab issue 53465</a></li>
+<li><a href="https://docs.gitlab.com/ee/raketasks/backup_restore.html#storing-configuration-files" target="_blank" rel="noopener">Gitlab backup and restore</a></li>
+<li><a href="https://docs.gitlab.com/ee/administration/restart_gitlab.html#omnibus-gitlab-reconfigure" target="_blank" rel="noopener">Gitlab reconfigure</a></li>
+<li><a href="https://juejin.im/post/5baf46326fb9a05cf039f57a" target="_blank" rel="noopener">Gitlab 迁移之后的事情</a>：这篇文章写得很对，但我们的症状比他的还要严重些。</li>
+</ol>
 
       
     </div>
@@ -466,9 +479,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Java/" rel="tag"># Java</a>
-          
-            <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+            <a href="/tags/Tools-Tips-Tricks/" rel="tag"># Tools&Tips&Tricks</a>
           
         </div>
       
@@ -481,15 +492,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2019/02/24/为什么我的jwt-认证失败？/" rel="next" title="为什么我的 JWT 认证失败？">
+                <i class="fa fa-chevron-left"></i> 为什么我的 JWT 认证失败？
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/01/13/OpenVPN-限制指定用户访问范围/" rel="prev" title="OpenVPN 限制指定用户访问范围">
-                OpenVPN 限制指定用户访问范围 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -639,7 +650,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#远程监控"><span class="nav-number">2.</span> <span class="nav-text">远程监控</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在-Docker-中远程监控"><span class="nav-number">3.</span> <span class="nav-text">在 Docker 中远程监控</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题原因"><span class="nav-number">2.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何解决"><span class="nav-number">3.</span> <span class="nav-text">如何解决</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>
@@ -796,9 +807,9 @@
   
     <script type="text/javascript">
       var disqus_config = function () {
-        this.page.url = 'https://lukezhanin.github.io/2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/';
-        this.page.identifier = '2019/01/12/使用 JMX 监控 Docker 中运行的 Spring Boot 应用/';
-        this.page.title = '使用 JMX 远程监控 Docker 中运行的 Spring Boot 应用';
+        this.page.url = 'https://lukezhanin.github.io/2019/02/27/Gitlab-迁移惊魂记/';
+        this.page.identifier = '2019/02/27/Gitlab-迁移惊魂记/';
+        this.page.title = 'Gitlab 迁移惊魂记';
         };
       function loadComments () {
         var d = document, s = d.createElement('script');
