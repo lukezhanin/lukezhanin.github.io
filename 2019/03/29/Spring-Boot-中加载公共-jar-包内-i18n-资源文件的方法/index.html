@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=PingFang SC:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Background开发了一个 Spring Boot Starter，内置了一些公共代码。其中包含默认的 Exception 处理器，需要国际化。打包后 的 starter jar 包里包含 i18n 资源目录为 i18n/messages，包含 messages.properties和messages_en.properties。 在使用 starter 的工程里，配置文件中 spring.m">
+<meta name="keywords" content="Spring-Boot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 中加载公共 jar 包内 i18n 资源文件的方法">
+<meta property="og:url" content="https://lukezhanin.github.io/2019/03/29/Spring-Boot-中加载公共-jar-包内-i18n-资源文件的方法/index.html">
+<meta property="og:site_name" content="迎向灵光消逝的年代">
+<meta property="og:description" content="Background开发了一个 Spring Boot Starter，内置了一些公共代码。其中包含默认的 Exception 处理器，需要国际化。打包后 的 starter jar 包里包含 i18n 资源目录为 i18n/messages，包含 messages.properties和messages_en.properties。 在使用 starter 的工程里，配置文件中 spring.m">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-29T09:05:25.456Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Boot 中加载公共 jar 包内 i18n 资源文件的方法">
+<meta name="twitter:description" content="Background开发了一个 Spring Boot Starter，内置了一些公共代码。其中包含默认的 Exception 处理器，需要国际化。打包后 的 starter jar 包里包含 i18n 资源目录为 i18n/messages，包含 messages.properties和messages_en.properties。 在使用 starter 的工程里，配置文件中 spring.m">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="迎向灵光消逝的年代" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://lukezhanin.github.io/2019/03/29/Spring-Boot-中加载公共-jar-包内-i18n-资源文件的方法/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring Boot 中加载公共 jar 包内 i18n 资源文件的方法 | 迎向灵光消逝的年代</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">迎向灵光消逝的年代</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Fire walk with me</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://lukezhanin.github.io/2019/03/29/Spring-Boot-中加载公共-jar-包内-i18n-资源文件的方法/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Luke Zhan">
+      <meta itemprop="description" content="Fire walk with me">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="迎向灵光消逝的年代">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring Boot 中加载公共 jar 包内 i18n 资源文件的方法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-29 16:16:42 / 修改时间：17:05:25" itemprop="dateCreated datePublished" datetime="2019-03-29T16:16:42+08:00">2019-03-29</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/03/29/Spring-Boot-中加载公共-jar-包内-i18n-资源文件的方法/#comments" itemprop="discussionUrl">
+                
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/03/29/Spring-Boot-中加载公共-jar-包内-i18n-资源文件的方法/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>开发了一个 Spring Boot Starter，内置了一些公共代码。其中包含默认的 Exception 处理器，需要国际化。打包后 的 starter jar 包里包含 i18n 资源目录为 <code>i18n/messages</code>，包含 <code>messages.properties</code>和<code>messages_en.properties</code>。</p>
+<p>在使用 starter 的工程里，配置文件中 <code>spring.messages.basename</code>配置了<code>i18n/messages</code>，对应异常中消息并没有拿到对应的国际化资源。</p>
+<h1 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h1><p>首先跟踪 <code>messageSource.getMessages()</code>，发现并没有找到消息的 key。</p>
+<p>那么是不是资源文件没有加载呢？跟踪 <code>MessageSourceAutoConfigure</code>，发现加载资源时使用的<code>local</code>是zh_CN。</p>
+<p>于是怀疑是两个工程的资源文件夹重名，所以加载的时候被覆盖了？将 starter 内的文件夹改名为<code>i18n-base</code>，并且把资源文件重命名为 <code>messages_zh_CN.properties</code>。将<code>i18n-base</code>加入 <code>spring.messages.basename</code>中：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">    messages:</span></span><br><span class="line">        <span class="comment">#设置国际化配置文件存放在 classpath:/i18n 目录下</span></span><br><span class="line"><span class="attr">        basename:</span> <span class="string">i18n/messages,</span> <span class="string">i18n-base/messages</span></span><br></pre></td></tr></table></figure>
+<p>一试果然成功了。</p>
+<p>但是还有几个疑问：</p>
+<ol>
+<li>为什么工程里默认的<code>messages.properties</code>可以加载？而公共 jar 包内的资源文件就不行？</li>
+</ol>
+<p>在 SpringBoot 层层叠叠的代码中，找到 <code>MessageSourceControl</code>中用于执行加载资源的 <code>newBundle</code>函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ResourceBundle <span class="title">newBundle</span><span class="params">(String baseName, Locale locale, String format, ClassLoader loader, <span class="keyword">boolean</span> reload)</span> <span class="keyword">throws</span> IllegalAccessException, InstantiationException, IOException </span>&#123;</span><br><span class="line">           <span class="keyword">if</span> (format.equals(<span class="string">"java.properties"</span>)) &#123;</span><br><span class="line">               String bundleName = <span class="keyword">this</span>.toBundleName(baseName, locale);</span><br><span class="line">               String resourceName = <span class="keyword">this</span>.toResourceName(bundleName, <span class="string">"properties"</span>);</span><br><span class="line">               ClassLoader classLoader = loader;</span><br><span class="line">               <span class="keyword">boolean</span> reloadFlag = reload;</span><br><span class="line"></span><br><span class="line">               InputStream inputStream;</span><br><span class="line">               <span class="keyword">try</span> &#123;</span><br><span class="line">                   inputStream = (InputStream)AccessController.doPrivileged(() -&gt; &#123;</span><br><span class="line">                       InputStream is = <span class="keyword">null</span>;</span><br><span class="line">                       <span class="keyword">if</span> (reloadFlag) &#123;</span><br><span class="line">                           URL url = classLoader.getResource(resourceName);</span><br><span class="line">                           <span class="keyword">if</span> (url != <span class="keyword">null</span>) &#123;</span><br><span class="line">                               URLConnection connection = url.openConnection();</span><br><span class="line">                               <span class="keyword">if</span> (connection != <span class="keyword">null</span>) &#123;</span><br><span class="line">                                   connection.setUseCaches(<span class="keyword">false</span>);</span><br><span class="line">                                   is = connection.getInputStream();</span><br><span class="line">                               &#125;</span><br><span class="line">                           &#125;</span><br><span class="line">                       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                           is = classLoader.getResourceAsStream(resourceName);</span><br><span class="line">                       &#125;</span><br><span class="line"></span><br><span class="line">                       <span class="keyword">return</span> is;</span><br><span class="line">                   &#125;);</span><br><span class="line">                   ... 省略了后面的代码</span><br></pre></td></tr></table></figure>
+<p>原来内部使用 AppClassLoader 来加载资源，而 AppClassLoader 的默认实现是按顺序加载 classpath 中的文件，找到第一个就返回。在我们的程序启动参数中，启动参数中，IDE 默认将本地资源放在 classpath 中 starter 的前面，因此 starter 内的同名资源<code>{basename + locale}.properties</code>便加载不了。</p>
+<ol start="2">
+<li>是不是 basename 可以相同，只要包不同就可以加载？</li>
+</ol>
+<p>试了一下果然可以。</p>
+<ol start="3">
+<li>为什么 starter 中 basename 相同， locale 不同就可以加载？</li>
+</ol>
+<p>原来 Spring Boot 在加载资源文件的时候，会使用多个 locale 来查找资源。如zh_CN，那么会从上到下来查找：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">zh_CN#Hans</span></span><br><span class="line"><span class="string">zh_CN_Hans</span></span><br><span class="line"><span class="string">zh_CN</span></span><br><span class="line"><span class="string">zh</span></span><br><span class="line">            <span class="string">===&gt;空的locale，默认</span></span><br></pre></td></tr></table></figure>
+<p>工程内的资源文件和 starter 内的资源文件不重名时，都可以被加载进来。重名则如问题 1 所述的只会加载 classpath 中排在前面的。</p>
+<p><strong>总而言之</strong>，只要能保证 starter 和工程中的资源文件 <code>basename + locale</code>不相同，就可以愉快地加载啦。</p>
+<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>综上所述，我们有两种方案来保证 starter 内部的 i18n 资源文件加载：</p>
+<ol>
+<li>将 starter 的 i18n 包重命名为 i18n-base，但需要使用包的工程配置中资源文件的 basename 加入这个前缀，否则不会生效。我们无法控制使用者如何配置，但解决方法也有，<code>MessageSource</code> 读取资源的时候，如果有 <code>parentMessageSource</code> 就会使用其加载资源——跟 ClassLoader 的父类委托加载机制如出一辙。我们默认将这个包加入到 <code>parentMessageSource</code> 中就行了，参考<a href="(https://github.com/ThomasKasene/example-parent-message-source/blob/master/src/main/java/com/thomaskasene/example/messagesource/parent/MessageSourceExtensionConfig.java">此处</a>)实现。</li>
+<li>将 starter 的资源文件重命名。但我们无法控制 starter 使用者的行为，如果有同名文件，将覆盖公共包内的定义。不可行。</li>
+</ol>
+<p>方案 1 的代码如下所示 (Scala)：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OZMessageResourceAutoConfigure</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> <span class="type">MESSAGE_SOURCE_BEAN</span> = <span class="string">"messageSource"</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> <span class="type">MESSAGE_SOURCE_BASE</span> = <span class="string">"i18n-base/messages"</span></span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean</span> <span class="function"><span class="keyword">def</span> <span class="title">messageSourceBaseLoader</span></span>: <span class="type">BeanPostProcessor</span> =</span><br><span class="line">    <span class="keyword">new</span> <span class="type">BeanPostProcessor</span>() &#123;</span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">postProcessBeforeInitialization</span></span>(bean: <span class="type">AnyRef</span>,</span><br><span class="line">                                                   beanName: <span class="type">String</span>): <span class="type">AnyRef</span> =</span><br><span class="line">        bean</span><br><span class="line"></span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">postProcessAfterInitialization</span></span>(bean: <span class="type">AnyRef</span>,</span><br><span class="line">                                                  beanName: <span class="type">String</span>): <span class="type">AnyRef</span> = &#123;</span><br><span class="line">        bean <span class="keyword">match</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> source: <span class="type">HierarchicalMessageSource</span></span><br><span class="line">              <span class="keyword">if</span> beanName == <span class="type">MESSAGE_SOURCE_BEAN</span> =&gt;</span><br><span class="line">            <span class="keyword">val</span> parent = <span class="keyword">new</span> <span class="type">ResourceBundleMessageSource</span></span><br><span class="line">            parent.setBasename(<span class="type">MESSAGE_SOURCE_BASE</span>)</span><br><span class="line">            parent.setDefaultEncoding(<span class="type">StandardCharsets</span>.<span class="type">UTF_8</span>.name())</span><br><span class="line">            source.setParentMessageSource(parent)</span><br><span class="line">          <span class="keyword">case</span> _ =&gt;</span><br><span class="line">        &#125;</span><br><span class="line">        bean</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Wrap-it-up"><a href="#Wrap-it-up" class="headerlink" title="Wrap it up"></a>Wrap it up</h1><ol>
+<li>Spring Boot 支持加载多个位置的多个资源文件，但要求 <code>basename + locale</code>不能重复。</li>
+<li>通过跟踪代码，理解了 MessageResource 的加载原理，理清了加载流程。</li>
+</ol>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a href="https://stackoverflow.com/questions/28750292/custom-spring-boot-starter-how-do-you-contribute-i18n-messages-to-the-messageso/30558018" target="_blank" rel="noopener">SO上的相关问题</a></li>
+<li><a href="https://github.com/ThomasKasene/example-parent-message-source/blob/master/src/main/java/com/thomaskasene/example/messagesource/parent/MessageSourceExtensionConfig.java" target="_blank" rel="noopener">对应的gist</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spring-Boot/" rel="tag"># Spring-Boot</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/27/Gitlab-迁移惊魂记/" rel="next" title="Gitlab 迁移惊魂记">
+                <i class="fa fa-chevron-left"></i> Gitlab 迁移惊魂记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Luke Zhan">
+            
+              <p class="site-author-name" itemprop="name">Luke Zhan</p>
+              <p class="site-description motion-element" itemprop="description">Fire walk with me</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Background"><span class="nav-number">1.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Why"><span class="nav-number">2.</span> <span class="nav-text">Why</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Solution"><span class="nav-number">3.</span> <span class="nav-text">Solution</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Wrap-it-up"><span class="nav-number">4.</span> <span class="nav-text">Wrap it up</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Luke Zhan</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Mist</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://lukezhanin.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'https://lukezhanin.github.io/2019/03/29/Spring-Boot-中加载公共-jar-包内-i18n-资源文件的方法/';
+        this.page.identifier = '2019/03/29/Spring-Boot-中加载公共-jar-包内-i18n-资源文件的方法/';
+        this.page.title = 'Spring Boot 中加载公共 jar 包内 i18n 资源文件的方法';
+        };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://lukezhanin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
